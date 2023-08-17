@@ -8,14 +8,14 @@
             <repositories>
                 <repository>
                     <id>central</id>
-                    <url>https://repo1.maven.org./maven2</url>
+                    <url>https://repo1.maven.org/maven2</url>
                     <releases><enabled>true</enabled></releases>
                     <snapshots><enabled>true</enabled></snapshots>
                 </repository>
                 <repository>
                     <id>github</id>
                     <name>GitHub TkachenkoVitaliy Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/TkachenkoVitaliy/poi-orm</url>
+                    <url>https://maven.pkg.github.com/TkachenkoVitaliy</url>
                 </repository>
             </repositories>
         </profile>
@@ -25,7 +25,7 @@
         <server>
             <id>github</id>
             <username>TkachenkoVitaliy</username>
-            <password>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</password>
+            <password>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</password>
         </server>
     </servers>
 </settings>

@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vtkachenko.assistant.margin.service.MarginService;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/margin")
 public class MarginController {
+
+    private final MarginService marginService;
 
     @PostMapping
     public ResponseEntity<Resource> createMarginReport(

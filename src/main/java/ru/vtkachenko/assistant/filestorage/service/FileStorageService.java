@@ -1,15 +1,16 @@
 package ru.vtkachenko.assistant.filestorage.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.stereotype.Service;
 import ru.vtkachenko.assistant.filestorage.config.FileStorageProperties;
-import ru.vtkachenko.assistant.filestorage.exception.FileStorageException;
+import ru.vtkachenko.assistant.filestorage.dto.FileDto;
+import ru.vtkachenko.assistant.filestorage.util.FileStorageUtil;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@Service
 public class FileStorageService {
     private final Path TEMP_DIRECTORY;
 
@@ -18,14 +19,14 @@ public class FileStorageService {
         this.TEMP_DIRECTORY = FILE_STORAGE_LOCATION.resolve("temp");
     }
 
+    public List<Path> storeFiles(String folder, List<FileDto> fileDtos) {
+        return fileDtos.stream()
+                .map(fileDto -> storeFile(folder, fileDto))
+                .collect(Collectors.toList());
+    }
 
-    private Path saveFileToFileSystem(MultipartFile file, String fileNameForSave) {
-        Path savedFilePath = TEMP_DIRECTORY.resolve(fileNameForSave);
-        try {
-            Files.copy(file.getInputStream(), savedFilePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new FileStorageException(String.format("Не удалось сохранить файл - %s", savedFilePath), e);
-        }
-        return savedFilePath;
+    public Path storeFile(String folder, FileDto fileDto) {
+        Path savedFilePath = TEMP_DIRECTORY.resolve(folder).resolve(fileDto.nameForSave());
+        return FileStorageUtil.saveFileToFileSystem(fileDto.file(), savedFilePath);
     }
 }
