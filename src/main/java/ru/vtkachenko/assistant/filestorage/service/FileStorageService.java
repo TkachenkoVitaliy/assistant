@@ -16,8 +16,7 @@ public class FileStorageService {
     private final Path TEMP_DIRECTORY;
 
     public FileStorageService(FileStorageProperties fileStorageProperties) {
-        Path FILE_STORAGE_LOCATION = Paths.get(fileStorageProperties.getUploadDir()).toAbsolutePath().normalize();
-        this.TEMP_DIRECTORY = FILE_STORAGE_LOCATION.resolve("temp");
+        this.TEMP_DIRECTORY = Paths.get(fileStorageProperties.getTempDir()).toAbsolutePath().normalize();
     }
 
     public List<Path> storeFiles(String folder, List<FileDto> fileDtos) {
