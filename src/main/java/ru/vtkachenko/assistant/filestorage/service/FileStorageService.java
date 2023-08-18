@@ -3,6 +3,7 @@ package ru.vtkachenko.assistant.filestorage.service;
 import org.springframework.stereotype.Service;
 import ru.vtkachenko.assistant.filestorage.config.FileStorageProperties;
 import ru.vtkachenko.assistant.filestorage.dto.FileDto;
+import ru.vtkachenko.assistant.filestorage.exception.FileStorageException;
 import ru.vtkachenko.assistant.filestorage.util.FileStorageUtil;
 
 import java.nio.file.Path;
@@ -28,5 +29,20 @@ public class FileStorageService {
     public Path storeFile(String folder, FileDto fileDto) {
         Path savedFilePath = TEMP_DIRECTORY.resolve(folder).resolve(fileDto.nameForSave());
         return FileStorageUtil.saveFileToFileSystem(fileDto.file(), savedFilePath);
+    }
+
+    public void removeTempSubfolder(String subfolder) {
+        Path removeFolderPath = TEMP_DIRECTORY.resolve(subfolder);
+        removeFolder(removeFolderPath);
+    }
+
+    private void removeFolder(Path folder) {
+        if (!FileStorageUtil.isDirectory(folder)) {
+            throw new FileStorageException(String.format("Этот путь - %s не является директорией", folder));
+        }
+        boolean result = FileStorageUtil.removeRecursively(folder);
+        if (!result) {
+            throw new FileStorageException(String.format("Директория не найдена - %s", folder));
+        }
     }
 }
