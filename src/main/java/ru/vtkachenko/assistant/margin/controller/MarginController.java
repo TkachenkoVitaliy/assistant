@@ -28,6 +28,8 @@ public class MarginController {
             @RequestParam("stockAnnually") MultipartFile stockAnnually,
             @RequestParam("summaryAnnually") MultipartFile summaryAnnually
     ) {
+        marginService.createMarginReport(transitMonthly, stockMonthly, summaryMonthly,
+                transitAnnually, stockAnnually, summaryAnnually);
         return null;
     }
 }

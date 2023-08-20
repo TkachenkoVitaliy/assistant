@@ -54,7 +54,7 @@
         <dependency>
             <groupId>io.github.TkachenkoVitaliy</groupId>
             <artifactId>poi-orm</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.5</version>
         </dependency>
 
         <dependency>
