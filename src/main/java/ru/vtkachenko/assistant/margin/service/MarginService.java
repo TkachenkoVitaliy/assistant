@@ -1,21 +1,21 @@
 package ru.vtkachenko.assistant.margin.service;
 
-import com.poiorm.mapper.ExcelOrm;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.vtkachenko.assistant.excel.ExcelUtil;
+import ru.vtkachenko.assistant.util.ExcelUtil;
 import ru.vtkachenko.assistant.filestorage.service.FileStorageService;
+import ru.vtkachenko.assistant.margin.entity.MarginReportRow;
 import ru.vtkachenko.assistant.margin.entity.MonthMargin;
 import ru.vtkachenko.assistant.margin.entity.SummaryCityMargin;
+import ru.vtkachenko.assistant.util.OrderUtil;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +54,41 @@ public class MarginService {
         List<SummaryCityMargin> marginTransitAnnually = ExcelUtil.createListRows(transitAnnuallyPath,
                 SummaryCityMargin.class);
 
+        List<MarginReportRow> reportRowsTransit = marginTransitAnnually.stream()
+                .map(SummaryCityMargin::getCity)
+                .sorted(Comparator.comparingInt(OrderUtil::getIndexNumber))
+                .map(label -> {
+                    List<Double> valuesCity = marginTransitMonthly.stream()
+                            .map(
+                                    monthMargin -> monthMargin.getCities().stream()
+                                            .filter(cityMargin -> cityMargin.getCity().equals(label))
+                                            .findAny()
+                            )
+                            .map(
+                                    optionalCityMargin -> optionalCityMargin.isPresent() ?
+                                            optionalCityMargin.get().getMargin() : null
+                            )
+                            .collect(Collectors.toList());
+
+                    return MarginReportRow.builder()
+                            .label(label)
+                            .values(valuesCity)
+                            .build();
+                })
+                .toList();
+
+        marginTransitAnnually.forEach(
+                mta -> reportRowsTransit.stream()
+                        .filter(row -> row.getLabel().equals(mta.getCity()))
+                        .findFirst()
+                        .ifPresent(cityRow -> cityRow.getValues().add(mta.getMargin()))
+        );
+
+
+        System.out.println("REPORT ROWS TRANSIT");
+        reportRowsTransit.forEach(System.out::println);
+
+
         List<MonthMargin> marginStockMonthly = ExcelUtil.createListRows(stockMonthlyPath, MonthMargin.class);
         List<SummaryCityMargin> marginStockAnnually = ExcelUtil.createListRows(stockAnnuallyPath,
                 SummaryCityMargin.class);
@@ -61,6 +96,9 @@ public class MarginService {
         List<MonthMargin> marginSummaryMonthly = ExcelUtil.createListRows(summaryMonthlyPath, MonthMargin.class);
         List<SummaryCityMargin> marginSummaryAnnually = ExcelUtil.createListRows(summaryAnnuallyPath,
                 SummaryCityMargin.class);
+
+
+
         return null;
     }
     // Обрабатываем файлы

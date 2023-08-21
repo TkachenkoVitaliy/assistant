@@ -1,4 +1,4 @@
-package ru.vtkachenko.assistant.excel;
+package ru.vtkachenko.assistant.util;
 
 import com.poiorm.mapper.ExcelOrm;
 import lombok.SneakyThrows;
