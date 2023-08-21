@@ -26,7 +26,6 @@ public class SummaryCityMargin {
     @IdentifierMethod
     public static boolean check(String value) {
         if (value == null) return false;
-        System.out.println("Check " + value);
         return value.length() > 2 && value.length() < 20;
     }
 }
