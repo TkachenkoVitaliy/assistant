@@ -1,8 +1,13 @@
 package ru.vtkachenko.assistant.margin.service;
 
+import com.poiorm.mapper.ExcelOrmWriter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.apache.poi.ss.formula.functions.Rows;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +16,7 @@ import ru.vtkachenko.assistant.util.ExcelUtil;
 import ru.vtkachenko.assistant.filestorage.service.FileStorageService;
 import ru.vtkachenko.assistant.util.OrderUtil;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,10 +28,11 @@ public class MarginService {
     private final FileStorageService fileStorageService;
 
     private final static String MARGIN_FOLDER_NAME = "Margin";
+    private final static String MARGIN_REPORT_FILE_NAME = "Margin.xlsx";
 
     private final static String SUMMARY_TOTAL = "Общий итог";
 
-    public Resource createMarginReport(
+    public File createMarginReport(
             MultipartFile transitMonthly,
             MultipartFile stockMonthly,
             MultipartFile summaryMonthly,
@@ -83,7 +90,7 @@ public class MarginService {
                 marginStockMonthly, marginStockAnnually);
 
         // SUMMARY STEP 2
-        List<MonthColumn> stockSummaryColumns = createMonthColumns(rowNames,
+        List<MonthColumn> summaryMonthColumns = createMonthColumns(rowNames,
                 marginSummaryMonthly, marginSummaryAnnually);
 
         // SOUT для дебага
@@ -91,9 +98,37 @@ public class MarginService {
 
         transitMonthColumns.forEach(System.out::println);
         stockMonthColumns.forEach(System.out::println);
-        stockSummaryColumns.forEach(System.out::println);
+        summaryMonthColumns.forEach(System.out::println);
 
-        return null;
+        // ЗАПИСЬ в книгу
+        XSSFWorkbook resultWorkbook = new XSSFWorkbook();
+        XSSFSheet reportSheet = resultWorkbook.createSheet("Отчет");
+        reportSheet.setDisplayZeros(false);
+        File resultFile = new File(
+                fileStorageService.getTempDirectory().resolve(MARGIN_FOLDER_NAME).resolve(MARGIN_REPORT_FILE_NAME).toUri()
+        );
+
+        // Transit
+        List<LabelColumn> transitLabelColumns = List.of(new LabelColumn("2023 Транзит", rowNames));
+        ExcelOrmWriter.toExcel(reportSheet, transitLabelColumns, 0, 0);
+        Cell lastCell = ExcelOrmWriter.toExcel(reportSheet, transitMonthColumns, 0, 1);
+
+        // Stock
+        List<LabelColumn> stockLabelColumn = List.of(new LabelColumn("2023 Склад", rowNames));
+        ExcelOrmWriter.toExcel(reportSheet, stockLabelColumn, lastCell.getRowIndex() + 2, 0);
+        lastCell = ExcelOrmWriter.toExcel(reportSheet, stockMonthColumns, lastCell.getRowIndex() + 2, 1);
+
+        // Summary
+        List<LabelColumn> summaryLabelColumn = List.of(new LabelColumn("2023 Склад + транзит", rowNames));
+        ExcelOrmWriter.toExcel(reportSheet, summaryLabelColumn, lastCell.getRowIndex() + 2, 0);
+        lastCell = ExcelOrmWriter.toExcel(reportSheet, summaryMonthColumns, lastCell.getRowIndex() + 2, 1);
+
+        System.out.println(
+                String.format("Last cell - row index [%s] column index [%s]", lastCell.getRowIndex(), lastCell.getColumnIndex())
+        );
+
+        return ExcelUtil.writeWorkbook(resultFile, resultWorkbook);
+
     }
     // Обрабатываем файлы
     // Создаем файл отчета

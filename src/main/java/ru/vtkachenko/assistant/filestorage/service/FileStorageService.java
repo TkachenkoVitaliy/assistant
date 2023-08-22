@@ -15,6 +15,10 @@ import java.nio.file.Paths;
 public class FileStorageService {
     private final Path TEMP_DIRECTORY;
 
+    public Path getTempDirectory() {
+        return this.TEMP_DIRECTORY;
+    }
+
     public FileStorageService(FileStorageProperties fileStorageProperties) {
         this.TEMP_DIRECTORY = Paths.get(fileStorageProperties.getTempDir()).toAbsolutePath().normalize();
     }
