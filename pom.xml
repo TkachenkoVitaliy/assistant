@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+<!--        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
     </parent>
 
     <groupId>ru.vtkachenko</groupId>
@@ -21,16 +21,16 @@
 
     <repositories>
         <repository>
-            <id>github</id>
-            <name>GitHub TkachenkoVitaliy Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/TkachenkoVitaliy/poi-orm</url>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </repository>
 
         <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org./maven2</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <id>github</id>
+            <name>GitHub TkachenkoVitaliy Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/TkachenkoVitaliy/poi-orm</url>
         </repository>
     </repositories>
     <dependencies>
