@@ -14,9 +14,9 @@
     <version>0.0.1</version>
     <name>assistant</name>
 
-
     <properties>
         <java.version>17</java.version>
+        <poi.orm.version>0.1.3</poi.orm.version>
     </properties>
 
     <repositories>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>io.github.TkachenkoVitaliy</groupId>
             <artifactId>poi-orm</artifactId>
-            <version>0.1.3</version>
+            <version>${poi.orm.version}</version>
         </dependency>
 
         <dependency>
