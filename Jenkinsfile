@@ -18,7 +18,7 @@ pipeline {
         stage ('Deploy') {
             steps {
                 sshagent(['1804b215-19f9-4cdf-a1d7-f55ecf6179f4']) {
-                    sh "ssh root@89.23.106.12 'cd application/backend/assistant && chmod u+x deploy2.sh && ./deploy2.sh'"
+                    sh "ssh root@89.23.106.12 'cd application/backend/assistant && chmod u+x deploy.sh && ./deploy.sh'"
                 }
             }
         }
