@@ -1,4 +1,5 @@
 #! /bin/bash
+git stash
 mvn -s settings.xml clean install -DskipTests
 mv target/assistant-*.jar target/assistant.jar
 mv JenkinsDockerfile target/JenkinsDockerfile
