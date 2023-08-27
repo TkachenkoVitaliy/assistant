@@ -14,4 +14,4 @@ docker run -d -it -p 8089:8089 --restart always --name back backend
 echo 'connect container to dockernet network'
 docker network inspect dockernet >/dev/null 2>&1 || docker network create --driver bridge dockernet
 docker network connect dockernet back
-echo 'complete!'
+echo 'complete!!!'
