@@ -25,7 +25,7 @@
         <server>
             <id>github</id>
             <username>TkachenkoVitaliy</username>
-            <password></password>
+            <password>anypass</password>
         </server>
     </servers>
 </settings>
